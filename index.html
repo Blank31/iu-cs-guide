@@ -848,6 +848,45 @@ section { margin-bottom: 88px !important; padding-top: 18px; }
 .bg-overlay { backdrop-filter: blur(6px) !important; }
 .card { box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important; }
 
+/* =========================
+   SECTION "FOCUS MODE"
+   - makes current section feel like the only one
+   - others fade back (NO blur)
+   ========================= */
+
+body {
+  scroll-snap-type: y proximity; /* smooth snapping, not aggressive */
+}
+
+/* each section becomes a “chapter” */
+main section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-height: calc(100vh - var(--topbar-h) - 24px);
+  padding-top: 28px;
+  padding-bottom: 80px;
+}
+
+/* turn on focus mode styling */
+main.has-focus-mode section {
+  opacity: 0.18;
+  transform: scale(0.992);
+  transition: opacity 220ms var(--ease), transform 220ms var(--ease);
+}
+
+/* the current section stays crisp */
+main.has-focus-mode section.is-current {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* optional: adds clearer separation between sections */
+main section:not(:last-child) {
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+[data-theme="dark"] main section:not(:last-child) {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
 
   </style>
 </head>
@@ -1433,17 +1472,28 @@ gsap.utils.toArray("main section").forEach((section) => {
     const sections = Array.from(document.querySelectorAll('main section'));
     const sectionById = new Map(sections.map(s => [s.id, s]));
 
-    const observer = new IntersectionObserver((entries) => {
-      // pick the most visible section
-      const visible = entries
-        .filter(e => e.isIntersecting)
-        .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (!visible) return;
+    const mainEl = document.querySelector("main");
+if (mainEl) mainEl.classList.add("has-focus-mode");
 
-      navLinks.forEach(a => a.classList.remove('active'));
-      const active = navLinks.find(a => a.getAttribute('href') === "#" + visible.target.id);
-      if (active) active.classList.add('active');
-    }, { root: null, threshold: [0.15, 0.25, 0.4, 0.6] });
+// set the first section as current on load
+if (sections[0]) sections[0].classList.add("is-current");
+
+const observer = new IntersectionObserver((entries) => {
+  const visible = entries
+    .filter(e => e.isIntersecting)
+    .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+  if (!visible) return;
+
+  // sidebar active link
+  navLinks.forEach(a => a.classList.remove('active'));
+  const active = navLinks.find(a => a.getAttribute('href') === "#" + visible.target.id);
+  if (active) active.classList.add('active');
+
+  // focus mode: mark current section
+  sections.forEach(s => s.classList.remove("is-current"));
+  visible.target.classList.add("is-current");
+}, { root: null, threshold: [0.15, 0.25, 0.4, 0.6] });
+
 
     sections.forEach(s => observer.observe(s));
 
@@ -1480,7 +1530,6 @@ gsap.utils.toArray("main section").forEach((section) => {
 
         gsap.to(item, {
           autoAlpha: hit ? 1 : 0.22,
-          filter: hit ? "blur(0px)" : "blur(0.6px)",
           scale: hit ? 1 : 0.98,
           duration: 0.22,
           overwrite: true
@@ -1491,7 +1540,7 @@ gsap.utils.toArray("main section").forEach((section) => {
       // If term exists and nothing matched, restore visibility (avoid "blank page" feeling)
       if (t && !any) {
         searchableItems.forEach(item => {
-          gsap.to(item, { autoAlpha: 1, filter: "blur(0px)", scale: 1, duration: 0.18, overwrite: true });
+          gsap.to(item, { autoAlpha: 1, scale: 1, duration: 0.18, overwrite: true });
           item.style.pointerEvents = "auto";
         });
       }
