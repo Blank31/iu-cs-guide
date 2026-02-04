@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IU CS Major Guide | Parallax Edition</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* --- CSS VARIABLES --- */
+        :root {
+            --primary: #990000;
+            --primary-rgb: 153, 0, 0;
+            --primary-hover: #7a0000;
+            --accent: #FFD700;
+            
+            /* Glassmorphism Colors */
+            --bg-sidebar: rgba(255, 255, 255, 0.85);
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-overlay: rgba(244, 246, 248, 0.6); /* Lightens the image for readability */
+            
+            --text-main: #1a1a1a;
+            --text-muted: #444; /* Darker for better contrast on glass */
+            --border: rgba(255, 255, 255, 0.6);
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            --radius-lg: 16px;
+        }
+
+        [data-theme="dark"] {
+            --bg-sidebar: rgba(22, 27, 34, 0.85);
+            --bg-card: rgba(22, 27, 34, 0.9);
+            --bg-overlay: rgba(13, 17, 23, 0.85); /* Darkens image */
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* --- PARALLAX BACKGROUND --- */
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120vh; /* Taller than screen for parallax movement */
+            z-index: -2;
+            /* Using a generic brick campus image that resembles IU */
+            background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Overlay to make text readable */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(to bottom, 
+                rgba(153, 0, 0, 0.1), 
+                var(--bg-overlay) 40%
+            );
+            backdrop-filter: blur(3px); /* Subtle blur on the background image */
+        }
+
+        /* --- LAYOUT --- */
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- SIDEBAR (GLASS) --- */
+        aside {
+            background: var(--bg-sidebar);
+            backdrop-filter: blur(15px); /* Frosted Glass */
+            -webkit-backdrop-filter: blur(15px);
+            border-right: 1px solid var(--border);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-item {
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+        }
+
+        /* --- MAIN --- */
+        main {
+            padding: 3rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .search-bar input {
+            width: 300px;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            color: var(--text-main);
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid rgba(0,0,0,0.1);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        /* --- CARDS (GLASS) --- */
+        section { margin-bottom: 5rem; }
+
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(255,255,255,0.5); }
+        h2 { font-size: 1.8rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px); /* Frosted Glass */
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+
+        .card h3 { margin-bottom: 0.8rem; color: var(--primary); }
+        
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            background: rgba(0,0,0,0.05); 
+            color: #555;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .tag.red { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
+        .tag.blue { background: rgba(0, 123, 255, 0.15); color: #007bff; }
+        .tag.gold { background: rgba(255, 193, 7, 0.15); color: #d39e00; }
+        .tag.green { background: rgba(40, 167, 69, 0.15); color: #28a745; }
+
+        .alert {
+            background: rgba(220, 53, 69, 0.1);
+            backdrop-filter: blur(5px);
+            border-left: 4px solid #dc3545;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        /* --- ROADMAP --- */
+        .roadmap { position: relative; padding-left: 30px; margin-top: 2rem; }
+        .roadmap-line {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: rgba(0,0,0,0.1);
+            transform-origin: top;
+        }
+        .roadmap-item { position: relative; margin-bottom: 3rem; }
+        .roadmap-dot {
+            position: absolute;
+            left: -36px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.8);
+            z-index: 2;
+        }
+
+        /* Mobile */
+        .mobile-toggle { display: none; }
+        @media (max-width: 768px) {
+            .app-container { grid-template-columns: 1fr; }
+            aside { display: none; }
+            main { padding: 2rem; }
+            .mobile-toggle { display: block; position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: var(--primary); color: white; border: none; border-radius: 50%; z-index: 999; font-size: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3);}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="parallax-bg"></div>
+    <div class="bg-overlay"></div>
+
+    <div class="app-container">
+        
+        <aside id="sidebar">
+            <div class="brand"><span>🎓</span> IU CS Guide</div>
+            <nav class="nav-menu">
+                <a href="#overview" class="nav-item active">Overview</a>
+                <a href="#careers" class="nav-item">Career Paths</a>
+                <a href="#skills" class="nav-item">Core Skills</a>
+                <a href="#coursework" class="nav-item">Coursework</a>
+                <a href="#timeline" class="nav-item">Recruiting Timeline</a>
+            </nav>
+        </aside>
+
+        <main>
+            <header>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search... (GSAP powered)">
+                </div>
+                <button class="theme-toggle" id="themeBtn">🌙</button>
+            </header>
+
+            <section id="overview">
+                <h1>The CS Major Guide</h1>
+                <p>A strategic roadmap for Computer Science students at Indiana University Bloomington.</p>
+                
+                <div class="alert">
+                    <span>⚠️</span> DON’T USE AI AS YOUR MAIN SOURCE TO CODE. You won't be job ready.
+                </div>
+
+                <div class="grid-3">
+                    <div class="card">
+                        <span class="tag red">Mission</span>
+                        <h3>What You Learn</h3>
+                        <ul>
+                            <li>Build software systems end-to-end</li>
+                            <li>Think in models & tradeoffs</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <span class="tag gold">Output</span>
+                        <h3>Problems Solved</h3>
+                        <ul>
+                            <li>Automating processes</li>
+                            <li>Data-driven decision tools</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <span class="tag blue">Context</span>
+                        <h3>Luddy Advantage</h3>
+                        <ul>
+                            <li>Clear Core Sequence</li>
+                            <li>Serious employer access</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="careers">
+                <h2>🚀 Career Paths</h2>
+                <div class="grid-3 searchable-container">
+                    <div class="card" data-keywords="software engineer swe">
+                        <span class="tag green">Common</span>
+                        <h3>Software Engineer</h3>
+                        <p>Roles: Full-Stack, Backend</p>
+                    </div>
+                    <div class="card" data-keywords="data ml">
+                        <span class="tag blue">Analytics</span>
+                        <h3>Data & AI Track</h3>
+                        <p>Roles: Data Engineer, ML Ops</p>
+                    </div>
+                    <div class="card" data-keywords="security">
+                        <span class="tag red">Specialized</span>
+                        <h3>Security</h3>
+                        <p>Roles: AppSec, SOC Analyst</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="skills">
+                <h2>🛠️ Skills That Matter</h2>
+                <div class="grid-3">
+                    <div class="card"><h3>1. Fluency</h3><p>One strong language (Java/Python). 2-3 projects.</p></div>
+                    <div class="card"><h3>2. Data Structures</h3><p>The internship filter. Practice weekly.</p></div>
+                    <div class="card"><h3>3. Git + Workflow</h3><p>Collaboration is key. Learn PRs.</p></div>
+                </div>
+            </section>
+
+            <section id="coursework">
+                <h2>📚 Coursework Strategy</h2>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:20px;" class="course-flow">
+                    <div class="card" style="padding:1rem;">C200 Intro</div>
+                    <div style="align-self:center; font-size:1.5rem; color: var(--primary);">➔</div>
+                    <div class="card" style="padding:1rem;">C212 Systems</div>
+                    <div style="align-self:center; font-size:1.5rem; color: var(--primary);">➔</div>
+                    <div class="card" style="padding:1rem;">C343 Data Structures</div>
+                </div>
+            </section>
+
+            <section id="timeline">
+                <h2>📅 Recruiting Timeline</h2>
+                <div class="roadmap">
+                    <div class="roadmap-line"></div>
+                    
+                    <div class="roadmap-item">
+                        <div class="roadmap-dot"></div>
+                        <div class="card">
+                            <span class="tag blue">Freshman Fall</span>
+                            <h3>Exploration</h3>
+                            <p>Join communities, start GitHub. Don't wait.</p>
+                        </div>
+                    </div>
+
+                    <div class="roadmap-item">
+                        <div class="roadmap-dot"></div>
+                        <div class="card">
+                            <span class="tag green">Freshman Spring</span>
+                            <h3>Proof of Skill</h3>
+                            <p>Build 1 portfolio project. Talk to recruiters.</p>
+                        </div>
+                    </div>
+
+                    <div class="roadmap-item">
+                        <div class="roadmap-dot"></div>
+                        <div class="card">
+                            <span class="tag gold">Sophomore Fall</span>
+                            <h3>Resume Real</h3>
+                            <p><strong>Take C343.</strong> Go hard at Career Fair.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+    
+    <button class="mobile-toggle">☰</button>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. PARALLAX BACKGROUND EFFECT ---
+        // Moves the bg image slightly slower than the scroll speed
+        gsap.to(".parallax-bg", {
+            yPercent: 20, // Move image down by 20% over the course of the page
+            ease: "none",
+            scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: true
+            }
+        });
+
+        // --- 2. EXISTING ANIMATIONS ---
+
+        // Sidebar
+        gsap.from(".nav-item", {
+            duration: 0.8, x: -50, opacity: 0, stagger: 0.1, ease: "power3.out", delay: 0.2
+        });
+
+        // Header
+        gsap.from(".brand", { duration: 1, y: -20, opacity: 0, ease: "elastic.out(1, 0.5)" });
+        gsap.from("header", { duration: 1, y: -20, opacity: 0, ease: "power2.out", delay: 0.4 });
+
+        // Sections
+        gsap.utils.toArray("section").forEach(section => {
+            gsap.from(section, {
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                },
+                y: 50, opacity: 0, duration: 1, ease: "power3.out"
+            });
+        });
+
+        // Grid Cards
+        gsap.utils.toArray(".grid-3").forEach(grid => {
+            gsap.from(grid.children, {
+                scrollTrigger: { trigger: grid, start: "top 80%" },
+                y: 30, opacity: 0, duration: 0.6, stagger: 0.15, ease: "back.out(1.7)"
+            });
+        });
+
+        // Timeline
+        gsap.from(".roadmap-line", {
+            scrollTrigger: { trigger: ".roadmap", start: "top 70%", end: "bottom 70%", scrub: 1 },
+            scaleY: 0, ease: "none"
+        });
+
+        gsap.utils.toArray(".roadmap-item").forEach(item => {
+            gsap.from(item, {
+                scrollTrigger: { trigger: item, start: "top 85%" },
+                x: 20, opacity: 0, duration: 0.5, ease: "power2.out"
+            });
+        });
+
+        // Hover Physics
+        const cards = document.querySelectorAll(".card");
+        cards.forEach(card => {
+            card.addEventListener("mouseenter", () => {
+                gsap.to(card, { y: -10, scale: 1.02, boxShadow: "0 15px 35px rgba(0,0,0,0.2)", duration: 0.3 });
+            });
+            card.addEventListener("mouseleave", () => {
+                gsap.to(card, { y: 0, scale: 1, boxShadow: "0 8px 32px rgba(0,0,0,0.1)", duration: 0.3 });
+            });
+        });
+
+        // Dark Mode Logic
+        const themeBtn = document.getElementById('themeBtn');
+        const html = document.documentElement;
+        themeBtn.addEventListener('click', () => {
+            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            themeBtn.textContent = newTheme === 'light' ? '🌙' : '☀️';
+        });
+
+        // Search Logic
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('.card').forEach(card => {
+                const text = card.innerText.toLowerCase();
+                const keywords = card.getAttribute('data-keywords') || "";
+                
+                if(text.includes(term) || keywords.includes(term)) {
+                    gsap.to(card, { autoAlpha: 1, display: "block", duration: 0.3 });
+                } else {
+                    gsap.to(card, { autoAlpha: 0, display: "none", duration: 0.3 });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
