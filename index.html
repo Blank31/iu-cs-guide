@@ -165,7 +165,7 @@
         .badge {
             display: inline-block; padding: 4px 10px; border-radius: 6px;
             font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-            margin-bottom: 5px; border: 1px solid rgba(0,0,0,0.1);
+            margin-bottom: 5rem; border: 1px solid rgba(0,0,0,0.1);
         }
         .badge.red { background: rgba(153, 0, 0, 0.1); color: var(--primary); }
         .badge.blue { background: rgba(0, 123, 255, 0.1); color: #007bff; }
@@ -223,6 +223,7 @@
                 <a href="#skills" class="nav-item">3. Skills to Build</a>
                 <a href="#coursework" class="nav-item">4. Coursework Strategy</a>
                 <a href="#timeline" class="nav-item">5. Recruiting Timeline</a>
+                <a href="#github-repos" class="nav-item">⭐ Top Repos</a>
             </nav>
             <div style="margin-top: auto; font-size: 0.8rem; color: var(--text-muted); opacity: 0.8;">
                 Adapted from CS Major Guide Template
@@ -517,6 +518,55 @@
                 </div>
             </section>
 
+            <section id="github-repos">
+                <h2>⭐ High-Impact GitHub Repos</h2>
+                <p>The "cheat codes" for mastering CS and Data Science. These are world-class resources used by top engineers.</p>
+
+                <div class="grid-3 searchable-container">
+                    <div class="card searchable-item" data-keywords="roadmap path career frontend backend devops">
+                        <span class="badge blue">Direction</span>
+                        <h4>Developer Roadmap</h4>
+                        <p>Interactive visual maps for every career path. <em>Essential for knowing what to learn next.</em></p>
+                        <a href="https://github.com/kamranahmedse/developer-roadmap" target="_blank">View Repo →</a>
+                    </div>
+
+                    <div class="card searchable-item" data-keywords="interview leetcode study plan faang">
+                        <span class="badge red">Interview Prep</span>
+                        <h4>Coding Interview Univ.</h4>
+                        <p>A complete multi-month study plan for becoming a software engineer at big tech companies.</p>
+                        <a href="https://github.com/jwasham/coding-interview-university" target="_blank">View Repo →</a>
+                    </div>
+
+                    <div class="card searchable-item" data-keywords="system design scale architecture backend">
+                        <span class="badge red">Interview Prep</span>
+                        <h4>System Design Primer</h4>
+                        <p>Learn how to design large-scale systems (like Netflix or Uber). <em>Crucial for Junior/Senior roles.</em></p>
+                        <a href="https://github.com/donnemartin/system-design-primer" target="_blank">View Repo →</a>
+                    </div>
+
+                    <div class="card searchable-item" data-keywords="projects build software from scratch database compiler">
+                        <span class="badge green">Projects</span>
+                        <h4>Build Your Own X</h4>
+                        <p>A massive list of tutorials to build your own Docker, Git, or Database from scratch.</p>
+                        <a href="https://github.com/codecrafters-io/build-your-own-x" target="_blank">View Repo →</a>
+                    </div>
+
+                    <div class="card searchable-item" data-keywords="data science ml machine learning ai analytics">
+                        <span class="badge gold">Data Science</span>
+                        <h4>Awesome Data Science</h4>
+                        <p>The ultimate curated list of resources, libraries, and datasets for every branch of Data Science.</p>
+                        <a href="https://github.com/academic/awesome-datascience" target="_blank">View Repo →</a>
+                    </div>
+
+                    <div class="card searchable-item" data-keywords="data engineering python pipeline sql etl">
+                        <span class="badge blue">Data Engineering</span>
+                        <h4>Data Engineer Handbook</h4>
+                        <p>Everything you need to know about the modern data stack: Spark, SQL, and AWS pipelines.</p>
+                        <a href="https://github.com/DataExpert-io/data-engineer-handbook" target="_blank">View Repo →</a>
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
 
@@ -599,5 +649,3 @@
     </script>
 </body>
 </html>
-
-
