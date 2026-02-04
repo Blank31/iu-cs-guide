@@ -60,13 +60,25 @@
       /* header */
       --topbar-h: 68px;
 
-      /* Inactivate Chip Row */
+      
+
+    }
+/* Makes each section feel like a “chapter card” */
+section.is-active {
+  background: rgba(255,255,255,0.20);
+  border-radius: 22px;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+[data-theme="dark"] section.is-active {
+  background: rgba(0,0,0,0.18);
+}
+
+    /* Inactivate Chip Row */
       .chip-row { display: none !important; }
 
       /* Hide/deactivate search UI */
       .search-bar { display: none !important; }
-
-    }
 
     [data-theme="dark"] {
       --bg: #0b0d10;
@@ -431,7 +443,58 @@
     .icon-btn:active { transform: translateY(0px) scale(0.98); }
 
     /* --- SECTIONS & TYPOGRAPHY --- */
-    section { margin-bottom: 62px; opacity: 1; scroll-margin-top: calc(var(--topbar-h) + 22px); }
+    /* ===== One-section-at-a-time layout ===== */
+main {
+  /* makes snap work more predictably */
+  scroll-padding-top: calc(var(--topbar-h) + 22px);
+}
+
+section {
+  /* BIG CHANGE: each section becomes a “screen” */
+  min-height: calc(100vh - var(--topbar-h) - 30px);
+  padding: 28px 0 40px;
+  margin-bottom: 0; /* remove big vertical stacking gap */
+  scroll-margin-top: calc(var(--topbar-h) + 22px);
+
+  /* we'll animate these with GSAP */
+  opacity: 0.25;
+  filter: blur(1px);
+  transform: translateY(18px);
+  transition: opacity 260ms var(--ease), filter 260ms var(--ease);
+}
+
+/* active section looks “in focus” */
+section.is-active {
+  opacity: 1;
+  filter: blur(0px);
+  transform: translateY(0px);
+}
+
+/* Optional: add “chapter spacing” without crowding */
+section + section {
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding-top: 48px;
+}
+[data-theme="dark"] section + section {
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ===== Scroll Snap: makes it feel like “one section at a time” ===== */
+html, body {
+  height: 100%;
+}
+
+body {
+  scroll-snap-type: y mandatory; /* “mandatory” snaps hard */
+  /* If you want a softer snap, change to: y proximity */
+}
+
+/* Each section becomes a snap point */
+main section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
 
     h1 {
       font-size: clamp(2.2rem, 2.8vw, 3rem);
@@ -723,6 +786,69 @@
       html { scroll-behavior: auto; }
       .card, .nav-item, .icon-btn, .search-bar input, .chip { transition: none !important; }
     }
+    /* ===== Repo Toggle Button + Panel ===== */
+    .repo-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0 18px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--text-main);
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+    }
+
+    .repo-toggle-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+    }
+
+    .repo-toggle-btn:active {
+    transform: translateY(0px) scale(0.98);
+    }
+
+    .repo-chev {
+    display: inline-block;
+    transition: transform 220ms var(--ease);
+    opacity: 0.8;
+    }
+
+    /* Collapsible panel starts closed */
+    .repo-panel {
+    overflow: hidden;
+    height: 0;
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    }
+
+    /* Optional: when open */
+    .repo-panel.is-open {
+    pointer-events: auto;
+    }
+    .repo-toggle-btn.open .repo-chev {
+    transform: rotate(180deg);
+    }
+
+    :root { --content-max: 980px; }
+main { max-width: var(--content-max) !important; }
+
+section { margin-bottom: 88px !important; padding-top: 18px; }
+.card { padding: 1.75rem !important; }
+
+.grid-2, .grid-3 { gap: 1.6rem !important; margin-bottom: 46px !important; }
+
+.bg-overlay { backdrop-filter: blur(6px) !important; }
+.card { box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important; }
+
+
   </style>
 </head>
 
@@ -902,11 +1028,13 @@
         <h3>Adjacent Options</h3>
         <div class="grid-2 searchable-container">
           <div class="card searchable-item" data-keywords="pm product manager">
-            <h4>G) Product / Technical PM</h4>
+            <span class="badge gold">G</span>
+            <h4>Product / Technical PM</h4>
             [cite_start]<p><strong>Signal:</strong> Shipping projects + Communication + User thinking. [cite: 52]</p>
           </div>
           <div class="card searchable-item" data-keywords="quant fintech finance">
-            <h4>H) Quant / FinTech</h4>
+            <span class="badge gold">H</span>
+            <h4>Quant / FinTech</h4>
             [cite_start]<p><strong>Signal:</strong> Algorithms + Systems + Internships. [cite: 55]</p>
           </div>
         </div>
@@ -1078,9 +1206,7 @@
         <h2>⭐ High-Impact GitHub Repos</h2>
         <p>The "cheat codes" for mastering CS and Data Science. These are world-class resources used by top engineers.</p>
 
-        <details class="section-details">
-        <summary>Show repos</summary>
-
+       
         <div class="grid-3 searchable-container">
           <div class="card searchable-item" data-keywords="roadmap path career frontend backend devops projects">
             <span class="badge blue">Direction</span>
@@ -1124,7 +1250,6 @@
             <a href="https://github.com/DataExpert-io/data-engineer-handbook" target="_blank">View Repo →</a>
           </div>
         </div>
-        </details>
       </section>
     </main>
   </div>
@@ -1158,20 +1283,50 @@
     gsap.from(".brand", { duration: 0.9, y: -14, opacity: 0, ease: "power3.out" });
 
     // Section reveal (Apple-ish: subtle)
-    gsap.utils.toArray("section").forEach(section => {
-      gsap.from(section, {
-        scrollTrigger: { trigger: section, start: "top 82%" },
-        y: 24, opacity: 0, duration: 0.7, ease: "power2.out"
-      });
-    });
+    // ===== One-section-at-a-time behavior =====
+gsap.utils.toArray("main section").forEach((section) => {
+  // When section becomes active, mark it
+  ScrollTrigger.create({
+    trigger: section,
+    start: "top 55%",
+    end: "bottom 55%",
+    onEnter: () => section.classList.add("is-active"),
+    onEnterBack: () => section.classList.add("is-active"),
+    onLeave: () => section.classList.remove("is-active"),
+    onLeaveBack: () => section.classList.remove("is-active")
+  });
+
+  // Smooth reveal
+  gsap.to(section, {
+    y: 0,
+    opacity: 1,
+    duration: 0.6,
+    ease: "power2.out",
+    scrollTrigger: {
+      trigger: section,
+      start: "top 80%",
+      toggleActions: "play none none reverse"
+    }
+  });
+});
+
 
     // Staggered Cards (subtle)
     gsap.utils.toArray(".grid-2, .grid-3").forEach(grid => {
-      gsap.from(grid.children, {
-        scrollTrigger: { trigger: grid, start: "top 85%" },
-        y: 18, opacity: 0, duration: 0.55, stagger: 0.06, ease: "power2.out"
-      });
-    });
+  const parentSection = grid.closest("section");
+
+  gsap.from(grid.children, {
+    scrollTrigger: {
+      trigger: parentSection || grid,
+      start: "top 65%",
+    },
+    y: 14,
+    opacity: 0,
+    duration: 0.45,
+    stagger: 0.05,
+    ease: "power2.out"
+  });
+});
 
     // Timeline line draw
     // ===== Timeline Flow Upgrade (scroll-driven progress + active step) =====
@@ -1431,28 +1586,8 @@
         .replace(/\[cite_start\]/g, "")
         .replace(/\[cite:\s*[\d,\s]+\]/g, "");
     });
-  :root { --content-max: 980px; }
-  main { max-width: var(--content-max) !important; }
-
-  section {
-    margin-bottom: 88px !important;
-    padding-top: 18px;
-  }
-
-  .card {
-    padding: 1.75rem !important;
-  }
-
-  .grid-2, .grid-3 {
-    gap: 1.6rem !important;
-    margin-bottom: 46px !important;
-  }
-
-  .bg-overlay { backdrop-filter: blur(6px) !important; }
-  .card { box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important; }
-    
     });
-
+   
   </script>
 </body>
 </html>
