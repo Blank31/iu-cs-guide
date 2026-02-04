@@ -1,651 +1,1422 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IU CS Major Guide | Ultimate Edition</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IU CS Major Guide | Ultimate Edition</title>
+
+  <!-- Keep your links -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet" />
+
+  <!-- Keep GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* =========================================================
+       APPLE-LIKE POLISH UPGRADE (keeps your content + links)
+       - Cleaner, higher-contrast UI
+       - Sticky topbar + section progress
+       - Better sidebar: active section auto-highlights
+       - Refined cards, hover, focus, reduced-motion support
+       ========================================================= */
+
+    /* --- CSS VARIABLES --- */
+    :root {
+      --primary: #990000; /* IU Crimson */
+      --primary-rgb: 153, 0, 0;
+      --accent: #FFD700;  /* IU Cream/Gold */
+
+      /* Apple-ish neutrals */
+      --bg: #f5f5f7;
+      --bg2: #ffffff;
+      --bg3: rgba(255,255,255,0.7);
+
+      /* Glassmorphism & Theme Colors (kept, refined) */
+      --bg-sidebar: rgba(255, 255, 255, 0.76);
+      --bg-card: rgba(255, 255, 255, 0.82);
+      --bg-overlay: rgba(244, 246, 248, 0.55);
+
+      --text-main: #111114;
+      --text-muted: rgba(17,17,20,0.68);
+      --border: rgba(17,17,20,0.10);
+      --shadow: 0 20px 70px rgba(0, 0, 0, 0.10);
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.07);
+
+      --radius-lg: 18px;
+      --radius-sm: 12px;
+      --radius-pill: 999px;
+
+      --focus: 0 0 0 3px rgba(var(--primary-rgb), 0.25);
+
+      /* motion */
+      --ease: cubic-bezier(.2,.8,.2,1);
+      --speed: 220ms;
+
+      /* layout */
+      --sidebar-w: 300px;
+      --content-max: 1180px;
+
+      /* header */
+      --topbar-h: 68px;
+
+      /* Inactivate Chip Row */
+      .chip-row { display: none !important; }
+
+      /* Hide/deactivate search UI */
+      .search-bar { display: none !important; }
+
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b0d10;
+      --bg2: #0f1217;
+      --bg3: rgba(15,18,23,0.72);
+
+      --bg-sidebar: rgba(15, 18, 23, 0.76);
+      --bg-card: rgba(18, 22, 28, 0.78);
+      --bg-overlay: rgba(10, 12, 16, 0.84);
+
+      --text-main: #eaeef3;
+      --text-muted: rgba(234,238,243,0.68);
+      --border: rgba(255,255,255,0.10);
+
+      --shadow: 0 20px 80px rgba(0, 0, 0, 0.55);
+      --shadow-soft: 0 12px 30px rgba(0,0,0,0.35);
+    }
+
+    /* --- ADDED: CUSTOM IU BRANDED SCROLLBAR --- */
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(var(--primary-rgb), 0.75);
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    [data-theme="dark"] ::-webkit-scrollbar-thumb {
+      border: 2px solid rgba(0,0,0,0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background: radial-gradient(1200px 800px at 20% -10%, rgba(var(--primary-rgb),0.10), transparent 55%),
+                  radial-gradient(1000px 700px at 90% 10%, rgba(255,215,0,0.12), transparent 55%),
+                  var(--bg);
+    }
+
+    /* Links */
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px dotted rgba(var(--primary-rgb), 0.55);
+      transition: background var(--speed) var(--ease), border-color var(--speed) var(--ease), color var(--speed) var(--ease);
+      border-radius: 6px;
+      padding: 0 2px;
+    }
+    a:hover {
+      border-bottom: 1px solid rgba(var(--primary-rgb), 0.9);
+      background: rgba(var(--primary-rgb), 0.06);
+    }
+
+    /* Accessible focus */
+    :where(button, a, input, [tabindex]):focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
+      border-radius: 12px;
+    }
+
+    /* --- PARALLAX BACKGROUND (kept) --- */
+    .parallax-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 120vh; z-index: -2;
+      background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.05) contrast(1.05);
+      transform: translateZ(0);
+    }
+
+    .bg-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0.15), var(--bg-overlay) 34%),
+        radial-gradient(900px 600px at 30% 15%, rgba(255,255,255,0.15), transparent 60%),
+        radial-gradient(1100px 700px at 70% 15%, rgba(255,255,255,0.08), transparent 60%);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    [data-theme="dark"] .bg-overlay {
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.20), var(--bg-overlay) 34%),
+        radial-gradient(900px 600px at 30% 15%, rgba(255,255,255,0.06), transparent 60%),
+        radial-gradient(1100px 700px at 70% 15%, rgba(255,255,255,0.04), transparent 60%);
+    }
+
+    /* --- LAYOUT --- */
+    .app-container {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      min-height: 100vh;
+    }
+
+    /* --- TOPBAR (new) --- */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 120;
+      height: var(--topbar-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 18px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      margin-bottom: 20px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 240px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.95rem;
+      user-select: none;
+    }
+    [data-theme="dark"] .pill {
+      background: rgba(0,0,0,0.25);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.4);
+    }
+
+    .progress-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 200px;
+    }
+    .progress-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .progress {
+      position: relative;
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
+      flex: 1;
+    }
+    [data-theme="dark"] .progress { background: rgba(255,255,255,0.08); }
+    .progress > span {
+      position: absolute;
+      inset: 0;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(var(--primary-rgb),0.9), rgba(255,215,0,0.9));
+      border-radius: 999px;
+      transform: translateZ(0);
+    }
+
+    /* --- SIDEBAR --- */
+    aside {
+      background: var(--bg-sidebar);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-right: 1px solid var(--border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      z-index: 110;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .brand {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 12px;
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,0.45);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.06);
+      margin-bottom: 14px;
+    }
+    .brand span { font-size: 1.2rem; }
+    .brand .brand-accent {
+      color: var(--primary);
+      font-weight: 900;
+      letter-spacing: -0.2px;
+    }
+    [data-theme="dark"] .brand {
+      background: rgba(0,0,0,0.20);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.35);
+    }
+
+    .nav-menu {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.35);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    [data-theme="dark"] .nav-menu { background: rgba(0,0,0,0.18); }
+
+    .nav-item {
+      position: relative;
+      padding: 0.85rem 0.95rem;
+      border-radius: 14px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform var(--speed) var(--ease), background var(--speed) var(--ease), color var(--speed) var(--ease);
+      border: 1px solid transparent;
+      will-change: transform;
+    }
+    .nav-item:hover {
+      transform: translateX(3px);
+      background: rgba(var(--primary-rgb), 0.08);
+      color: var(--text-main);
+      border-color: rgba(var(--primary-rgb), 0.12);
+    }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(var(--primary-rgb),0.14), rgba(255,215,0,0.10));
+      color: var(--text-main);
+      border-color: rgba(var(--primary-rgb), 0.20);
+    }
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(var(--primary-rgb), 0.9);
+    }
+    .nav-item.active { padding-left: 1.15rem; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      opacity: 0.9;
+      padding: 12px 10px 4px;
+    }
+
+    /* --- MAIN --- */
+    main {
+      padding: 26px 26px 64px;
+      max-width: var(--content-max);
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* --- SEARCH + CONTROLS (refined) --- */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    .search-bar input {
+      width: 100%;
+      max-width: 520px;
+      padding: 12px 16px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: var(--text-main);
+      outline: none;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+      transition: transform var(--speed) var(--ease), box-shadow var(--speed) var(--ease), background var(--speed) var(--ease);
+    }
+    [data-theme="dark"] .search-bar input { background: rgba(0,0,0,0.28); box-shadow: 0 14px 28px rgba(0,0,0,0.42); }
+    .search-bar input:focus { transform: translateY(-1px); box-shadow: 0 18px 40px rgba(0,0,0,0.10); }
+
+    .chip-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.55);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: transform var(--speed) var(--ease), background var(--speed) var(--ease), color var(--speed) var(--ease);
+      user-select: none;
+    }
+    [data-theme="dark"] .chip { background: rgba(0,0,0,0.22); }
+    .chip:hover { transform: translateY(-1px); background: rgba(var(--primary-rgb),0.08); color: var(--text-main); }
+    .chip.active { background: rgba(var(--primary-rgb),0.14); color: var(--text-main); border-color: rgba(var(--primary-rgb),0.20); }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      background: rgba(255,255,255,0.60);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+      transition: transform var(--speed) var(--ease), box-shadow var(--speed) var(--ease), background var(--speed) var(--ease);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-main);
+      font-weight: 800;
+    }
+    [data-theme="dark"] .icon-btn { background: rgba(0,0,0,0.25); box-shadow: 0 14px 28px rgba(0,0,0,0.42); }
+    .icon-btn:hover { transform: translateY(-1px); box-shadow: 0 18px 40px rgba(0,0,0,0.10); }
+    .icon-btn:active { transform: translateY(0px) scale(0.98); }
+
+    /* --- SECTIONS & TYPOGRAPHY --- */
+    section { margin-bottom: 62px; opacity: 1; scroll-margin-top: calc(var(--topbar-h) + 22px); }
+
+    h1 {
+      font-size: clamp(2.2rem, 2.8vw, 3rem);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.8px;
+      color: var(--text-main);
+    }
+    .subtitle { font-size: 1.1rem; margin-bottom: 1.6rem; color: var(--text-muted); }
+
+    h2 {
+      font-size: 1.65rem;
+      margin: 2rem 0 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+      letter-spacing: -0.3px;
+    }
+    h2::before {
+      content: '';
+      width: 7px;
+      height: 28px;
+      background: linear-gradient(180deg, rgba(var(--primary-rgb),1), rgba(255,215,0,0.9));
+      border-radius: 999px;
+      display: block;
+    }
+
+    h3 { font-size: 1.25rem; margin: 1.25rem 0 0.6rem; color: var(--primary); letter-spacing: -0.2px; }
+    h4 {
+      font-size: 1.05rem;
+      margin-top: 0px;
+      margin-bottom: 10px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.2px;
+    }
+
+    p { margin-bottom: 0.8rem; font-size: 1rem; color: var(--text-main); }
+    li { margin-bottom: 0.55rem; }
+    ul { padding-left: 1.35rem; margin-bottom: 1rem; }
+
+    /* --- CARDS & GRIDS --- */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 1.2rem; margin-bottom: 32px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; margin-bottom: 32px; }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.55rem;
+      position: relative;
+      box-shadow: var(--shadow-soft);
+      transition: transform var(--speed) var(--ease), box-shadow var(--speed) var(--ease), border-color var(--speed) var(--ease);
+      overflow: hidden;
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      background: radial-gradient(600px 200px at 20% 0%, rgba(var(--primary-rgb),0.12), transparent 55%),
+                  radial-gradient(600px 200px at 80% 0%, rgba(255,215,0,0.10), transparent 60%);
+      opacity: 0;
+      transition: opacity var(--speed) var(--ease);
+      pointer-events: none;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(var(--primary-rgb), 0.16);
+    }
+    .card:hover::after { opacity: 1; }
+
+    /* --- BADGES --- */
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      border: 1px solid rgba(0,0,0,0.08);
+      letter-spacing: 0.4px;
+    }
+    .badge.red { background: rgba(153, 0, 0, 0.10); color: var(--primary); }
+    .badge.blue { background: rgba(0, 123, 255, 0.12); color: #0b62d6; }
+    .badge.green { background: rgba(40, 167, 69, 0.12); color: #1f8a37; }
+    .badge.gold { background: rgba(255, 193, 7, 0.16); color: #b88400; }
+
+    /* --- ADDED: FLOWCHART ENHANCEMENTS (kept) --- */
+    .flowchart-node {
+      background: var(--primary) !important;
+      color: white !important;
+      padding: 14px 22px !important;
+      border-radius: 999px !important;
+      box-shadow: 0 14px 28px rgba(153,0,0,0.22) !important;
+      border: none !important;
+      transition: transform 260ms var(--ease), filter 260ms var(--ease) !important;
+      font-weight: 900 !important;
+      text-align: center;
+    }
+    .flowchart-node:hover {
+      transform: translateY(-2px) scale(1.04);
+      filter: brightness(1.05);
+    }
+
+    /* --- WARNING BOX --- */
+    .warning-box {
+      background: rgba(220, 53, 69, 0.10);
+      border-left: 5px solid #dc3545;
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-lg);
+      margin: 1.2rem 0 1.6rem;
+      color: #dc3545;
+      font-weight: 800;
+      box-shadow: 0 12px 28px rgba(220, 53, 69, 0.10);
+    }
+
+    /* --- TIMELINE STYLES --- */
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    .timeline {
+    position: relative;
+    padding-left: 44px; /* more room for line + dots */
+    margin-top: 1.2rem;
+    }
 
-    <style>
-        /* --- CSS VARIABLES --- */
-        :root {
-            --primary: #990000; /* IU Crimson */
-            --primary-rgb: 153, 0, 0;
-            --accent: #FFD700;  /* IU Cream/Gold */
-            
-            /* Glassmorphism & Theme Colors */
-            --bg-sidebar: rgba(255, 255, 255, 0.85);
-            --bg-card: rgba(255, 255, 255, 0.9);
-            --bg-overlay: rgba(244, 246, 248, 0.7);
-            
-            --text-main: #1a1a1a;
-            --text-muted: #444;
-            --border: rgba(255, 255, 255, 0.6);
-            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-            --radius-lg: 16px;
-            --radius-sm: 8px;
-        }
+    /* Base line */
+    .timeline-line {
+    position: absolute;
+    left: 18px;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.10);
+    overflow: hidden;
+    transform-origin: top;
+    }
 
-        [data-theme="dark"] {
-            --bg-sidebar: rgba(22, 27, 34, 0.85);
-            --bg-card: rgba(22, 27, 34, 0.9);
-            --bg-overlay: rgba(13, 17, 23, 0.9);
-            --text-main: #c9d1d9;
-            --text-muted: #8b949e;
-            --border: rgba(255, 255, 255, 0.1);
-            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-        }
+    [data-theme="dark"] .timeline-line {
+    background: rgba(255,255,255,0.12);
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: var(--text-main);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+    /* Progress fill (glowing line that grows with scroll) */
+    .timeline-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 0%;
+    border-radius: 999px;
+    background: linear-gradient(
+        180deg,
+        rgba(var(--primary-rgb), 1),
+        rgba(255,215,0, 0.95)
+    );
+    box-shadow: 0 0 18px rgba(var(--primary-rgb),0.35);
+    will-change: height;
+    }
 
-        a { 
-            color: var(--primary); 
-            text-decoration: none; 
-            font-weight: 600;
-            border-bottom: 1px dotted var(--primary);
-            transition: all 0.2s;
-        }
-        a:hover { border-bottom: 1px solid var(--primary); background: rgba(153, 0, 0, 0.05); }
+    /* Dot placement */
+    .timeline-dot {
+    position: absolute;
+    left: 12px; /* aligns with line */
+    top: 22px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(var(--primary-rgb), 0.9);
+    border: 3px solid rgba(255,255,255,0.85);
+    box-shadow: 0 10px 22px rgba(var(--primary-rgb),0.22);
+    transform: scale(0.95);
+    transition: transform 220ms var(--ease), box-shadow 220ms var(--ease), background 220ms var(--ease);
+    }
 
-        /* --- PARALLAX BACKGROUND --- */
-        .parallax-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 120vh; z-index: -2;
-            /* Placeholder for a campus image */
-            background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-        }
+    [data-theme="dark"] .timeline-dot {
+    border: 3px solid rgba(0,0,0,0.35);
+    }
 
-        .bg-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.2), var(--bg-overlay) 30%);
-            backdrop-filter: blur(5px);
-        }
+    /* Timeline items: spacing + nicer flow */
+    .timeline-item {
+    position: relative;
+    margin-bottom: 1.8rem;
+    }
 
-        /* --- LAYOUT --- */
-        .app-container {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            min-height: 100vh;
-        }
+    /* Active state: dot + card glow */
+    .timeline-item.is-active .timeline-dot {
+    transform: scale(1.15);
+    background: rgba(255,215,0, 0.95);
+    box-shadow: 0 0 0 8px rgba(255,215,0,0.14), 0 18px 40px rgba(0,0,0,0.18);
+    }
 
-        /* --- SIDEBAR --- */
-        aside {
-            background: var(--bg-sidebar);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-right: 1px solid var(--border);
-            height: 100vh;
-            position: sticky;
-            top: 0;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
-            box-shadow: var(--shadow);
-        }
+    /* Card emphasis when active */
+    .timeline-item.is-active .card {
+    border-color: rgba(var(--primary-rgb), 0.22);
+    box-shadow: var(--shadow);
+    }
 
-        .brand {
-            font-size: 1.4rem; font-weight: 800; color: var(--primary);
-            margin-bottom: 2rem; display: flex; align-items: center; gap: 10px;
-        }
+    /* Subtle connector line from dot into card (nice touch) */
+    .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: 26px;
+    top: 30px;
+    width: 16px;
+    height: 2px;
+    background: rgba(var(--primary-rgb), 0.18);
+    border-radius: 999px;
+    }
 
-        .nav-item {
-            padding: 0.8rem 1rem; border-radius: 12px;
-            color: var(--text-muted); font-weight: 600; font-size: 0.95rem;
-            margin-bottom: 0.5rem; display: flex; align-items: center; gap: 12px;
-            cursor: pointer; transition: background 0.2s;
-        }
-        .nav-item:hover, .nav-item.active { background-color: rgba(var(--primary-rgb), 0.1); color: var(--primary); }
+    [data-theme="dark"] .timeline-item::before {
+    background: rgba(255,215,0, 0.10);
+    }
 
-        /* --- MAIN --- */
-        main { padding: 3rem 4rem; max-width: 1200px; margin: 0 auto; width: 100%; }
 
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
+    /* --- SMALL UTILITIES --- */
+    .muted { color: var(--text-muted); }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0;
+    }
 
-        .search-bar input {
-            width: 300px; padding: 12px 20px; border-radius: 50px;
-            border: 1px solid rgba(0,0,0,0.1); background: var(--bg-card);
-            backdrop-filter: blur(10px); color: var(--text-main); outline: none;
-        }
+    /* --- MOBILE SIDEBAR OVERLAY (new) --- */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--speed) var(--ease);
+      z-index: 200;
+    }
+    .backdrop.show { opacity: 1; pointer-events: auto; }
 
-        .theme-toggle {
-            background: var(--bg-card); border: 1px solid rgba(0,0,0,0.1);
-            padding: 10px; border-radius: 50%; cursor: pointer; font-size: 1.2rem;
-        }
+    /* --- RESPONSIVE --- */
+    .mobile-toggle { display: none; }
+    @media (max-width: 980px) {
+      :root { --sidebar-w: 280px; }
+      main { padding: 18px 16px 60px; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
 
-        /* --- SECTIONS & TYPOGRAPHY --- */
-        section { margin-bottom: 6rem; opacity: 1;}
-        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -1px; color: var(--primary); }
-        .subtitle { font-size: 1.2rem; margin-bottom: 2rem; color: var(--text-muted); }
-        
-        h2 { font-size: 1.8rem; margin: 2rem 0 1.5rem; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
-        h2::before { content: ''; width: 6px; height: 26px; background: var(--primary); border-radius: 4px; display: block; }
-        
-        h3 { font-size: 1.3rem; margin: 1.5rem 0 0.5rem; color: var(--primary); }
-        h4 { 
-    font-size: 1.1rem; 
-    margin-top: 0px;    /* Pulls title UP closer to the badge */
-    margin-bottom: 10px; /* Pulls text below CLOSER to title */
-    font-weight: 700;}
+    @media (max-width: 820px) {
+      .app-container { grid-template-columns: 1fr; }
+      aside {
+        display: flex;
+        position: fixed;
+        left: -90%;
+        top: 0;
+        width: 78%;
+        max-width: 360px;
+        height: 100vh;
+        z-index: 250;
+        transition: left 300ms var(--ease);
+        border-right: 1px solid var(--border);
+      }
+      aside.open { left: 0; }
+      .mobile-toggle {
+        display: inline-flex;
+        position: fixed;
+        bottom: 18px;
+        right: 18px;
+        z-index: 260;
+        width: 54px;
+        height: 54px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.28);
+        background: rgba(var(--primary-rgb), 0.95);
+        color: white;
+        font-size: 1.35rem;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform var(--speed) var(--ease);
+      }
+      .mobile-toggle:active { transform: scale(0.96); }
+      .topbar { border-radius: 16px; }
+      .topbar-left { min-width: unset; }
+      .progress-label { display: none; }
+    }
 
-        p { margin-bottom: 0.8rem; font-size: 1rem; }
-        li { margin-bottom: 0.5rem; } /* Gives list items better breathing room */
-
-        ul { 
-    padding-left: 1.5rem; /* Increases indentation so bullets aren't cut off */
-    margin-bottom: 1rem;}
-
-        /* --- CARDS & GRIDS --- */
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 40px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 40px; }
-
-        .card {
-            background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            position: relative;
-            box-shadow: var(--shadow);
-            transition: transform 0.2s;
-        }
-
-        /* --- BADGES --- */
-        .badge {
-            display: inline-block; padding: 4px 10px; border-radius: 6px;
-            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-            margin-bottom: 5rem; border: 1px solid rgba(0,0,0,0.1);
-        }
-        .badge.red { background: rgba(153, 0, 0, 0.1); color: var(--primary); }
-        .badge.blue { background: rgba(0, 123, 255, 0.1); color: #007bff; }
-        .badge.green { background: rgba(40, 167, 69, 0.1); color: #28a745; }
-        .badge.gold { background: rgba(255, 193, 7, 0.15); color: #d39e00; }
-
-        /* --- WARNING BOX --- */
-        .warning-box {
-            background: rgba(220, 53, 69, 0.1);
-            border-left: 4px solid #dc3545;
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-sm);
-            margin: 1.5rem 0;
-            color: #dc3545;
-            font-weight: 600;
-        }
-
-        /* --- TIMELINE STYLES --- */
-        .timeline { position: relative; padding-left: 30px; margin-top: 2rem; }
-        .timeline-line {
-            position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-            background: rgba(0,0,0,0.1); transform-origin: top;
-        }
-        .timeline-item { position: relative; margin-bottom: 3rem; }
-        .timeline-dot {
-            position: absolute; left: -36px; top: 6px; width: 16px; height: 16px;
-            background: var(--primary); border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.8); z-index: 2;
-        }
-
-        /* --- RESPONSIVE --- */
-        .mobile-toggle { display: none; }
-        @media (max-width: 768px) {
-            .app-container { grid-template-columns: 1fr; }
-            aside { display: none; }
-            main { padding: 2rem 1.5rem; }
-            .mobile-toggle { display: block; position: fixed; bottom: 20px; right: 20px; z-index: 200; 
-                width: 50px; height: 50px; border-radius: 50%; border:none; background: var(--primary); color: white; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            }
-        }
-    </style>
+    /* --- REDUCED MOTION --- */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .card, .nav-item, .icon-btn, .search-bar input, .chip { transition: none !important; }
+    }
+  </style>
 </head>
+
 <body>
+  <div class="parallax-bg"></div>
+  <div class="bg-overlay"></div>
 
-    <div class="parallax-bg"></div>
-    <div class="bg-overlay"></div>
+  <!-- Mobile backdrop (new) -->
+  <div class="backdrop" id="backdrop" onclick="toggleSidebar(false)"></div>
 
-    <div class="app-container">
-        
-        <aside id="sidebar">
-            <div class="brand"><span>🎓</span> IU CS Guide</div>
-            <nav class="nav-menu">
-                <a href="#overview" class="nav-item active">1. Overview</a>
-                <a href="#careers" class="nav-item">2. Career Paths</a>
-                <a href="#skills" class="nav-item">3. Skills to Build</a>
-                <a href="#coursework" class="nav-item">4. Coursework Strategy</a>
-                <a href="#timeline" class="nav-item">5. Recruiting Timeline</a>
-                <a href="#github-repos" class="nav-item">⭐ Top Repos</a>
-            </nav>
-            <div style="margin-top: auto; font-size: 0.8rem; color: var(--text-muted); opacity: 0.8;">
-                Adapted from CS Major Guide Template
+  <div class="app-container">
+    <aside id="sidebar">
+      <div class="brand"><span>🎓</span> <span class="brand-accent">IU CS Guide</span></div>
+
+      <nav class="nav-menu">
+        <a href="#overview" class="nav-item active">1. Overview</a>
+        <a href="#careers" class="nav-item">2. Career Paths</a>
+        <a href="#skills" class="nav-item">3. Skills to Build</a>
+        <a href="#coursework" class="nav-item">4. Coursework Strategy</a>
+        <a href="#timeline" class="nav-item">5. Recruiting Timeline</a>
+        <a href="#github-repos" class="nav-item">⭐ Top Repos</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        Adapted from CS Major Guide Template
+      </div>
+    </aside>
+
+    <main>
+      <!-- Apple-ish sticky top bar (new) -->
+      <div class="topbar" id="topbar">
+        <div class="topbar-left">
+          <div class="pill"><h4>IU CS Guide</h4></div>
+        </div>
+
+        <div class="progress-wrap" aria-label="Reading progress">
+          <div class="progress-label" id="progressLabel">Progress</div>
+          <div class="progress"><span id="progressBar"></span></div>
+        </div>
+
+        <div class="controls">
+          <button class="icon-btn" id="jumpTopBtn" type="button" title="Back to top">↑</button>
+          <button class="icon-btn" id="themeBtn" type="button" title="Toggle theme">🌙</button>
+        </div>
+      </div>
+
+      <!-- Search + quick chips (new, keeps your search) -->
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search roles, courses, skills..." />
+      </div>
+      <div class="chip-row" id="chipRow">
+        <div class="chip" data-chip="freshman">Freshman</div>
+        <div class="chip" data-chip="internship">Internship</div>
+        <div class="chip" data-chip="ds&a">DS&A</div>
+        <div class="chip" data-chip="projects">Projects</div>
+        <div class="chip" data-chip="security">Security</div>
+        <div class="chip" data-chip="ai">AI</div>
+      </div>
+
+      <!-- =======================
+           YOUR ORIGINAL CONTENT
+           (kept: sections, text, ALL links)
+           ======================= -->
+
+      <section id="overview">
+        <h1>Overview</h1>
+        <p class="subtitle">What This Major Actually Does</p>
+
+        <div class="warning-box">
+          ⚠️ DON’T USE AI AS YOUR MAIN SOURCE TO CODE. YOU WONT BE JOB READY.
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>What you'll learn to do</h3>
+            <ul>
+              [cite_start]<li>Build software systems end-to-end (problem → design → code → test → deploy). [cite: 4]</li>
+              [cite_start]<li>Think in "models + tradeoffs" (runtime, memory, correctness, security, usability). [cite: 5]</li>
+              [cite_start]<li>Translate messy real-world needs into clear requirements and solutions. [cite: 6]</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Skills this major builds</h3>
+            <ul>
+              [cite_start]<li><strong>Programming fluency:</strong> + debugging discipline. [cite: 8]</li>
+              [cite_start]<li><strong>DS&A:</strong> How to make software fast + scalable. [cite: 9]</li>
+              [cite_start]<li><strong>Systems thinking:</strong> Components interaction (OS, networks, DBs). [cite: 10]</li>
+              [cite_start]<li><strong>Discrete math / logic:</strong> Proofs and structures for correctness. [cite: 11]</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1.2rem;">
+          <h3>Problems you learn to solve</h3>
+          <div class="grid-2">
+            <ul>
+              [cite_start]<li>Automating processes and building products people use. [cite: 13]</li>
+              [cite_start]<li>Reliable systems (APIs, distributed services, performance). [cite: 15]</li>
+            </ul>
+            <ul>
+              [cite_start]<li>Data-driven decision tools (analytics, ML pipelines). [cite: 14]</li>
+              [cite_start]<li>Secure software (threat modeling, vulnerabilities). [cite: 16]</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1.2rem; border-left: 6px solid rgba(var(--primary-rgb),0.85);">
+          <h3>Luddy School Positioning</h3>
+          <ul>
+            [cite_start]<li><strong>Clear Core Sequence:</strong> Intro → Software Systems → Discrete Structures → Data Structures. [cite: 18]
+              (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>)</li>
+            [cite_start]<li><strong>Built-in Specialization:</strong> You pick an area like AI, security, systems, etc. [cite: 19]
+              (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>)</li>
+            [cite_start]<li><strong>Serious Employer Access:</strong> Through Luddy Career Services events and semiannual Luddy Career Fair. [cite: 20]
+              (<a href="https://luddy.indiana.edu/student_portal/career-services/career-fairs-events.html?utm_source=chatgpt.com" target="_blank">luddy.indiana.edu</a>)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="careers">
+        <h2>2. Career Paths (Grouped + Practical)</h2>
+
+        <h3>Core Careers (Most Common)</h3>
+        <div class="grid-3 searchable-container">
+          <div class="card searchable-item" data-keywords="software engineer swe backend frontend fullstack internship freshman">
+            <span class="badge red">A</span>
+            <h4>Software Engineer (SWE)</h4>
+            [cite_start]<p><strong>Entry:</strong> SWE I, Backend/Frontend, Full-Stack [cite: 25]</p>
+            [cite_start]<p><strong>Skills:</strong> OOP, APIs, Git, Testing, System Design, SQL [cite: 26]</p>
+            [cite_start]<p><strong>Trajectory:</strong> SWE → Senior → Tech Lead or Manager [cite: 27]</p>
+          </div>
+
+          <div class="card searchable-item" data-keywords="data analyst engineer ml ai internship projects">
+            <span class="badge blue">B</span>
+            <h4>Data/Analytics Track</h4>
+            [cite_start]<p><strong>Entry:</strong> Data Analyst, Data Engineer, ML Engineer [cite: 29]</p>
+            [cite_start]<p><strong>Skills:</strong> Python, SQL, ETL, Stats, Model Evaluation [cite: 30]</p>
+            [cite_start]<p><strong>Trajectory:</strong> Data/ML Eng → Senior → Platform Scientist [cite: 31]</p>
+          </div>
+
+          <div class="card searchable-item" data-keywords="it devops cloud reliability projects internship">
+            <span class="badge green">C</span>
+            <h4>IT / Enterprise Engineering</h4>
+            [cite_start]<p><strong>Entry:</strong> Systems Analyst, QA Automation, DevOps [cite: 33]</p>
+            [cite_start]<p><strong>Skills:</strong> Scripting, Cloud, CI/CD, Monitoring [cite: 34]</p>
+            [cite_start]<p><strong>Trajectory:</strong> Platform/SRE → Senior → Architect [cite: 35]</p>
+          </div>
+        </div>
+
+        <h3>Specialized / Competitive Paths</h3>
+        <div class="grid-3 searchable-container">
+          <div class="card searchable-item" data-keywords="security cyber appsec">
+            <span class="badge gold">D</span>
+            <h4>Security</h4>
+            [cite_start]<p><strong>Entry:</strong> Security Analyst, AppSec Intern, SOC [cite: 38]</p>
+            [cite_start]<p><strong>Skills:</strong> Networking, OS, Threat Modeling [cite: 39]</p>
+            [cite_start]<p><em>IU Specializations include Security.</em> (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>) [cite: 40]</p>
+          </div>
+
+          <div class="card searchable-item" data-keywords="ai ml research data science">
+            <span class="badge gold">E</span>
+            <h4>AI / ML</h4>
+            [cite_start]<p><strong>Entry:</strong> Data/ML Internships, Research Assistant [cite: 42]</p>
+            [cite_start]<p><strong>Skills:</strong> Linear Algebra, Python, Model Building [cite: 43]</p>
+            [cite_start]<p><em>IU Specializations include AI + Data Science.</em> (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>) [cite: 44]</p>
+          </div>
+
+          <div class="card searchable-item" data-keywords="systems low-level c++ rust performance">
+            <span class="badge gold">F</span>
+            <h4>Systems / Performance</h4>
+            [cite_start]<p><strong>Entry:</strong> Systems Engineer, Infrastructure [cite: 46]</p>
+            [cite_start]<p><strong>Skills:</strong> C/C++/Rust, OS Concepts, Profiling [cite: 47]</p>
+            [cite_start]<p><strong>Trajectory:</strong> Systems SWE → Senior → Staff [cite: 48]</p>
+          </div>
+        </div>
+
+        <h3>Adjacent Options</h3>
+        <div class="grid-2 searchable-container">
+          <div class="card searchable-item" data-keywords="pm product manager">
+            <h4>G) Product / Technical PM</h4>
+            [cite_start]<p><strong>Signal:</strong> Shipping projects + Communication + User thinking. [cite: 52]</p>
+          </div>
+          <div class="card searchable-item" data-keywords="quant fintech finance">
+            <h4>H) Quant / FinTech</h4>
+            [cite_start]<p><strong>Signal:</strong> Algorithms + Systems + Internships. [cite: 55]</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="skills">
+        <h2>3. Skills to Build (Hire-Me Signals)</h2>
+
+        <div class="grid-2">
+          <div class="card">
+            <h4>1) One Strong Language</h4>
+            [cite_start]<p><strong>Why:</strong> Interviews assume fluency. [cite: 59]</p>
+            [cite_start]<p><strong>Build:</strong> Core sequence + projects alongside classes. [cite: 60]</p>
+            [cite_start]<p><strong>Signal:</strong> 2–3 projects (README + Demo) + Internship bullets. [cite: 61]</p>
+          </div>
+
+          <div class="card">
+            <h4>2) Data Structures & Algorithms</h4>
+            [cite_start]<p><strong>Why:</strong> The filter for most SWE internships. [cite: 63]</p>
+            [cite_start]<p><strong>Build:</strong> Treat DS&A class like training camp; practice weekly. [cite: 64]</p>
+            [cite_start]<p><strong>Signal:</strong> Interview performance + Clean code. [cite: 65]</p>
+          </div>
+
+          <div class="card">
+            <h4>3) Git + Teamwork</h4>
+            [cite_start]<p><strong>Why:</strong> Internships = Collaboration, PRs, Tickets. [cite: 67]</p>
+            <p><strong>Build:</strong> Group projects, Hackathons. [cite_start]Force PR usage. [cite: 68]</p>
+            [cite_start]<p><strong>Signal:</strong> "Code reviews", "CI checks", "Issues/PRs" on resume. [cite: 69]</p>
+          </div>
+
+          <div class="card">
+            <h4>4) APIs + Databases</h4>
+            [cite_start]<p><strong>Why:</strong> Real software is CRUD + Logic + Integrations. [cite: 71]</p>
+            [cite_start]<p><strong>Build:</strong> App with Auth + REST endpoints + SQL. [cite: 72]</p>
+            [cite_start]<p><strong>Signal:</strong> "Designed schema", "Reduced query time". [cite: 73]</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 2rem;">
+          <h4>Soft Skills</h4>
+          <ul>
+            <li><strong>Communication:</strong> Explaining tradeoffs, status updates. [cite_start]<em>Build:</em> Presenting projects, documentation. [cite: 80, 81]</li>
+            <li><strong>Ownership:</strong> Managers want interns who don't stall. [cite_start]<em>Build:</em> Take projects from "works locally" → "deployed". [cite: 84, 85]</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="coursework">
+        <h2>4. Coursework Strategy</h2>
+        [cite_start]<p>Goal: Finish the core early to recruit with credibility. [cite: 88, 96]</p>
+        [cite_start]<p>Always keep this link in mind: <a href="https://cs.indiana.edu/programs/bs-computer-science/specializations.html?utm_source=chatgpt.com" target="_blank">IU CS Specializations</a> [cite: 87]</p>
+
+        <div class="card" style="margin-bottom: 1.6rem;">
+          <h4>The Core Spine (Must-take Foundation)</h4>
+          <ul style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: center; margin-top: 18px;">
+            <li class="badge red flowchart-node" style="font-size: 1rem;">C200/C211 Intro</li> ➔
+            <li class="badge red flowchart-node" style="font-size: 1rem;">C212 Systems</li> ➔
+            <li class="badge red flowchart-node" style="font-size: 1rem;">C241 Discrete</li> ➔
+            <li class="badge red flowchart-node" style="font-size: 1rem;">C343 Data Structures</li>
+          </ul>
+          <p style="margin-top: 18px;">+ Career development course <strong>CSCI-Y 395</strong>. (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>) [cite_start][cite: 94]</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h4>Smart Sequencing</h4>
+            <p>Get the core done within the first <strong>~3 semesters</strong> so you can pursue specialization coursework and be ready for internships. (<a href="https://cs.indiana.edu/programs/bs-computer-science/specializations.html?utm_source=chatgpt.com" target="_blank">Dept of CS</a>) [cite_start][cite: 96, 97]</p>
+            <ul>
+              [cite_start]<li><strong>Freshman:</strong> C200/211 → C212 → C241 [cite: 99]</li>
+              [cite_start]<li><strong>Sophomore Fall:</strong> C343 early (Unlocks projects + interviews) [cite: 100]</li>
+              [cite_start]<li><strong>Sophomore Spring+:</strong> Specializations + Electives [cite: 101]</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h4>High-Signal Electives</h4>
+            [cite_start]<p>Pick a specialization (AI, Security, Systems) (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>) [cite: 103] and create a story:</p>
+            <ul>
+              [cite_start]<li><strong>SWE Story:</strong> Software Eng + DBs + Systems [cite: 105]</li>
+              [cite_start]<li><strong>Data Story:</strong> Data Science + ML + Pipelines [cite: 106]</li>
+              [cite_start]<li><strong>Security Story:</strong> Security + Networks + Systems [cite: 107]</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.2rem;">
+          [cite_start]<strong>Common Sense Pairing Rule:</strong> Don't pair your hardest CS theory class with your hardest Math class AND a major recruiting semester. [cite: 111, 112]
+        </div>
+      </section>
+
+      <section id="timeline">
+        <h2>5. Experience & Recruiting Timeline</h2>
+        [cite_start]<p>This is the section that actually changes outcomes. [cite: 114]</p>
+
+        <div class="timeline">
+          <div class="timeline-line"></div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card">
+              <span class="badge blue">Freshman Fall</span>
+              <h4>Exploration + Setup</h4>
+              <ul>
+                [cite_start]<li>Join 1–2 tech communities (one for building, one for networking). [cite: 117]</li>
+                [cite_start]<li>Start GitHub early (even tiny projects). [cite: 118]</li>
+                [cite_start]<li>Learn how recruiting works (Handshake). [cite: 119]</li>
+                [cite_start]<li><em>Mistake:</em> Waiting until sophomore year to build outside class. [cite: 121]</li>
+              </ul>
             </div>
-        </aside>
+          </div>
 
-        <main>
-            <header>
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Search roles, courses, skills...">
-                </div>
-                <button class="theme-toggle" id="themeBtn">🌙</button>
-            </header>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card">
+              <span class="badge green">Freshman Spring</span>
+              <h4>First Proof of Skill</h4>
+              <ul>
+                [cite_start]<li>Finish intro sequence momentum. [cite: 125]</li>
+                [cite_start]<li>Build 1 portfolio project (Simple but deployed + documented). [cite: 126]</li>
+                <li>Attend Luddy events to practice talking to recruiters. (<a href="https://luddy.indiana.edu/student_portal/career-services/career-fairs-events.html?utm_source=chatgpt.com" target="_blank">luddy.indiana.edu</a>) [cite_start][cite: 127]</li>
+              </ul>
+            </div>
+          </div>
 
-            <section id="overview">
-                <h1>Overview</h1>
-                <p class="subtitle">What This Major Actually Does</p>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card">
+              <span class="badge gold">Freshman Summer</span>
+              <h4>First Exposure</h4>
+              [cite_start]<p><strong>Goal:</strong> Any technical work (Research, IT, Freelance) OR a "summer shipping project" with weekly deliverables. [cite: 130, 131]</p>
+            </div>
+          </div>
 
-                <div class="warning-box">
-                    ⚠️ DON’T USE AI AS YOUR MAIN SOURCE TO CODE. YOU WONT BE JOB READY.
-                </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card">
+              <span class="badge red">Sophomore Fall</span>
+              <h4>Resume Becomes Real</h4>
+              <ul>
+                <li>Get into DS&A (C343) early. (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>) [cite_start][cite: 134]</li>
+                [cite_start]<li>Start interview prep consistently. [cite: 135]</li>
+                <li>Go hard at Luddy Career Fair. (<a href="https://luddy.indiana.edu/student_portal/career-services/career-fairs-events.html?utm_source=chatgpt.com" target="_blank">luddy.indiana.edu</a>) [cite_start][cite: 136]</li>
+              </ul>
+            </div>
+          </div>
 
-                <div class="grid-2">
-                    <div class="card">
-                        <h3>What you'll learn to do</h3>
-                        <ul>
-                            <li>Build software systems end-to-end (problem → design → code → test → deploy).</li>
-                            <li>Think in "models + tradeoffs" (runtime, memory, correctness, security, usability).</li>
-                            <li>Translate messy real-world needs into clear requirements and solutions.</li>
-                        </ul>
-                    </div>
-                    <div class="card">
-                        <h3>Skills this major builds</h3>
-                        <ul>
-                            <li><strong>Programming fluency:</strong> + debugging discipline.</li>
-                            <li><strong>DS&A:</strong> How to make software fast + scalable.</li>
-                            <li><strong>Systems thinking:</strong> Components interaction (OS, networks, DBs).</li>
-                            <li><strong>Discrete math / logic:</strong> Proofs and structures for correctness.</li>
-                        </ul>
-                    </div>
-                </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card">
+              <span class="badge red">Junior Fall</span>
+              <h4>Prime Time</h4>
+              <p>Career-defining window for top internships. [cite_start]Use specialization + projects narrative. [cite: 147, 149, 150]</p>
+              [cite_start]<p>Targeted outreach + referrals (<a href="https://luddy.indiana.edu/student_portal/career-services/career-fairs-events.html?utm_source=chatgpt.com" target="_blank">luddy.indiana.edu</a>). [cite: 151]</p>
+            </div>
+          </div>
 
-                <div class="card" style="margin-top: 1.5rem;">
-                    <h3>Problems you learn to solve</h3>
-                    <div class="grid-2">
-                        <ul>
-                            <li>Automating processes and building products people use.</li>
-                            <li>Reliable systems (APIs, distributed services, performance).</li>
-                        </ul>
-                        <ul>
-                            <li>Data-driven decision tools (analytics, ML pipelines).</li>
-                            <li>Secure software (threat modeling, vulnerabilities).</li>
-                        </ul>
-                    </div>
-                </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card">
+              <span class="badge blue">Senior Year</span>
+              <h4>Convert or Backup</h4>
+              [cite_start]<p>If return offer: Lock it in. If not: Full-time recruiting + Capstone + Alumni networking. [cite: 157, 158]</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                <div class="card" style="margin-top: 1.5rem; border-left: 5px solid var(--primary);">
-                    <h3>Luddy School Positioning</h3>
-                    <ul>
-                        <li><strong>Clear Core Sequence:</strong> Intro → Software Systems → Discrete Structures → Data Structures. 
-                            (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>)</li>
-                        <li><strong>Built-in Specialization:</strong> You pick an area like AI, security, systems, etc. 
-                            (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>)</li>
-                        <li><strong>Serious Employer Access:</strong> Through Luddy Career Services events and semiannual Luddy Career Fair. 
-                            (<a href="https://luddy.indiana.edu/student_portal/career-services/career-fairs-events.html?utm_source=chatgpt.com" target="_blank">luddy.indiana.edu</a>)</li>
-                    </ul>
-                </div>
-            </section>
+      <section id="github-repos">
+        <h2>⭐ High-Impact GitHub Repos</h2>
+        <p>The "cheat codes" for mastering CS and Data Science. These are world-class resources used by top engineers.</p>
 
-            <section id="careers">
-                <h2>2. Career Paths (Grouped + Practical)</h2>
+        <div class="grid-3 searchable-container">
+          <div class="card searchable-item" data-keywords="roadmap path career frontend backend devops projects">
+            <span class="badge blue">Direction</span>
+            <h4>Developer Roadmap</h4>
+            <p>Interactive visual maps for every career path. <em>Essential for knowing what to learn next.</em></p>
+            <a href="https://github.com/kamranahmedse/developer-roadmap" target="_blank">View Repo →</a>
+          </div>
 
-                <h3>Core Careers (Most Common)</h3>
-                <div class="grid-3 searchable-container">
-                    <div class="card searchable-item" data-keywords="software engineer swe backend frontend fullstack">
-                        <span class="badge red">A</span>
-                        <h4>Software Engineer (SWE)</h4>
-                        <p><strong>Entry:</strong> SWE I, Backend/Frontend, Full-Stack</p>
-                        <p><strong>Skills:</strong> OOP, APIs, Git, Testing, System Design, SQL</p>
-                        <p><strong>Trajectory:</strong> SWE → Senior → Tech Lead or Manager</p>
-                    </div>
-                    <div class="card searchable-item" data-keywords="data analyst engineer ml">
-                        <span class="badge blue">B</span>
-                        <h4>Data/Analytics Track</h4>
-                        <p><strong>Entry:</strong> Data Analyst, Data Engineer, ML Engineer</p>
-                        <p><strong>Skills:</strong> Python, SQL, ETL, Stats, Model Evaluation</p>
-                        <p><strong>Trajectory:</strong> Data/ML Eng → Senior → Platform Scientist</p>
-                    </div>
-                    <div class="card searchable-item" data-keywords="it devops cloud reliability">
-                        <span class="badge green">C</span>
-                        <h4>IT / Enterprise Engineering</h4>
-                        <p><strong>Entry:</strong> Systems Analyst, QA Automation, DevOps</p>
-                        <p><strong>Skills:</strong> Scripting, Cloud, CI/CD, Monitoring</p>
-                        <p><strong>Trajectory:</strong> Platform/SRE → Senior → Architect</p>
-                    </div>
-                </div>
+          <div class="card searchable-item" data-keywords="interview leetcode study plan faang ds&a">
+            <span class="badge red">Interview Prep</span>
+            <h4>Coding Interview Univ.</h4>
+            <p>A complete multi-month study plan for becoming a software engineer at big tech companies.</p>
+            <a href="https://github.com/jwasham/coding-interview-university" target="_blank">View Repo →</a>
+          </div>
 
-                <h3>Specialized / Competitive Paths</h3>
-                <div class="grid-3 searchable-container">
-                    <div class="card searchable-item" data-keywords="security cyber appsec">
-                        <span class="badge gold">D</span>
-                        <h4>Security</h4>
-                        <p><strong>Entry:</strong> Security Analyst, AppSec Intern, SOC</p>
-                        <p><strong>Skills:</strong> Networking, OS, Threat Modeling</p>
-                        <p><em>IU Specializations include Security.</em> (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>)</p>
-                    </div>
-                    <div class="card searchable-item" data-keywords="ai ml research">
-                        <span class="badge gold">E</span>
-                        <h4>AI / ML</h4>
-                        <p><strong>Entry:</strong> Data/ML Internships, Research Assistant</p>
-                        <p><strong>Skills:</strong> Linear Algebra, Python, Model Building</p>
-                        <p><em>IU Specializations include AI + Data Science.</em> (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>)</p>
-                    </div>
-                    <div class="card searchable-item" data-keywords="systems low-level c++ rust">
-                        <span class="badge gold">F</span>
-                        <h4>Systems / Performance</h4>
-                        <p><strong>Entry:</strong> Systems Engineer, Infrastructure</p>
-                        <p><strong>Skills:</strong> C/C++/Rust, OS Concepts, Profiling</p>
-                        <p><strong>Trajectory:</strong> Systems SWE → Senior → Staff</p>
-                    </div>
-                </div>
+          <div class="card searchable-item" data-keywords="system design scale architecture backend">
+            <span class="badge red">Interview Prep</span>
+            <h4>System Design Primer</h4>
+            <p>Learn how to design large-scale systems (like Netflix or Uber). <em>Crucial for Junior/Senior roles.</em></p>
+            <a href="https://github.com/donnemartin/system-design-primer" target="_blank">View Repo →</a>
+          </div>
 
-                <h3>Adjacent Options</h3>
-                <div class="grid-2 searchable-container">
-                    <div class="card searchable-item" data-keywords="pm product manager">
-                        <h4>G) Product / Technical PM</h4>
-                        <p><strong>Signal:</strong> Shipping projects + Communication + User thinking.</p>
-                    </div>
-                    <div class="card searchable-item" data-keywords="quant fintech finance">
-                        <h4>H) Quant / FinTech</h4>
-                        <p><strong>Signal:</strong> Algorithms + Systems + Internships.</p>
-                    </div>
-                </div>
-            </section>
+          <div class="card searchable-item" data-keywords="projects build software from scratch database compiler">
+            <span class="badge green">Projects</span>
+            <h4>Build Your Own X</h4>
+            <p>A massive list of tutorials to build your own Docker, Git, or Database from scratch.</p>
+            <a href="https://github.com/codecrafters-io/build-your-own-x" target="_blank">View Repo →</a>
+          </div>
 
-            <section id="skills">
-                <h2>3. Skills to Build (Hire-Me Signals)</h2>
-                
-                <div class="grid-2">
-                    <div class="card">
-                        <h4>1) One Strong Language</h4>
-                        <p><strong>Why:</strong> Interviews assume fluency.</p>
-                        <p><strong>Build:</strong> Core sequence + projects alongside classes.</p>
-                        <p><strong>Signal:</strong> 2–3 projects (README + Demo) + Internship bullets.</p>
-                    </div>
-                    <div class="card">
-                        <h4>2) Data Structures & Algorithms</h4>
-                        <p><strong>Why:</strong> The filter for most SWE internships.</p>
-                        <p><strong>Build:</strong> Treat DS&A class like training camp; practice weekly.</p>
-                        <p><strong>Signal:</strong> Interview performance + Clean code.</p>
-                    </div>
-                    <div class="card">
-                        <h4>3) Git + Teamwork</h4>
-                        <p><strong>Why:</strong> Internships = Collaboration, PRs, Tickets.</p>
-                        <p><strong>Build:</strong> Group projects, Hackathons. Force PR usage.</p>
-                        <p><strong>Signal:</strong> "Code reviews", "CI checks", "Issues/PRs" on resume.</p>
-                    </div>
-                    <div class="card">
-                        <h4>4) APIs + Databases</h4>
-                        <p><strong>Why:</strong> Real software is CRUD + Logic + Integrations.</p>
-                        <p><strong>Build:</strong> App with Auth + REST endpoints + SQL.</p>
-                        <p><strong>Signal:</strong> "Designed schema", "Reduced query time".</p>
-                    </div>
-                </div>
+          <div class="card searchable-item" data-keywords="data science ml machine learning ai analytics">
+            <span class="badge gold">Data Science</span>
+            <h4>Awesome Data Science</h4>
+            <p>The ultimate curated list of resources, libraries, and datasets for every branch of Data Science.</p>
+            <a href="https://github.com/academic/awesome-datascience" target="_blank">View Repo →</a>
+          </div>
 
-                <div class="card" style="margin-top: 3rem;">
-                    <h4>Soft Skills</h4>
-                    <ul>
-                        <li><strong>Communication:</strong> Explaining tradeoffs, status updates. <em>Build:</em> Presenting projects, documentation.</li>
-                        <li><strong>Ownership:</strong> Managers want interns who don't stall. <em>Build:</em> Take projects from "works locally" → "deployed".</li>
-                    </ul>
-                </div>
-            </section>
+          <div class="card searchable-item" data-keywords="data engineering python pipeline sql etl">
+            <span class="badge blue">Data Engineering</span>
+            <h4>Data Engineer Handbook</h4>
+            <p>Everything you need to know about the modern data stack: Spark, SQL, and AWS pipelines.</p>
+            <a href="https://github.com/DataExpert-io/data-engineer-handbook" target="_blank">View Repo →</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
-            <section id="coursework">
-                <h2>4. Coursework Strategy</h2>
-                <p><strong>Goal:</strong> Finish the core early to recruit with credibility.</p>
-                <p>Always keep this link in mind: <a href="https://cs.indiana.edu/programs/bs-computer-science/specializations.html?utm_source=chatgpt.com" target="_blank">IU CS Specializations</a></p>
+  <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
 
-                <div class="card" style="margin-bottom: 2rem;">
-                    <h4>The Core Spine (Must-take Foundation)</h4>
-                    <ul style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-                        <li class="badge red" style="font-size: 1rem;">C200/C211 Intro</li> ➔
-                        <li class="badge red" style="font-size: 1rem;">C212 Systems</li> ➔
-                        <li class="badge red" style="font-size: 1rem;">C241 Discrete</li> ➔
-                        <li class="badge red" style="font-size: 1rem;">C343 Data Structures</li>
-                    </ul>
-                    <p style="margin-top: 10px;">+ Career development course <strong>CSCI-Y 395</strong>. (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>)</p>
-                </div>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
 
-                <div class="grid-2">
-                    <div class="card">
-                        <h4>Smart Sequencing</h4>
-                        <p>Get the core done within the first <strong>~3 semesters</strong> so you can pursue specialization coursework and be ready for internships. (<a href="https://cs.indiana.edu/programs/bs-computer-science/specializations.html?utm_source=chatgpt.com" target="_blank">Dept of CS</a>)</p>
-                        <ul>
-                            <li><strong>Freshman:</strong> C200/211 → C212 → C241</li>
-                            <li><strong>Sophomore Fall:</strong> C343 early (Unlocks projects + interviews)</li>
-                            <li><strong>Sophomore Spring+:</strong> Specializations + Electives</li>
-                        </ul>
-                    </div>
-                    <div class="card">
-                        <h4>High-Signal Electives</h4>
-                        <p>Pick a specialization (AI, Security, Systems) (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>) and create a story:</p>
-                        <ul>
-                            <li><strong>SWE Story:</strong> Software Eng + DBs + Systems</li>
-                            <li><strong>Data Story:</strong> Data Science + ML + Pipelines</li>
-                            <li><strong>Security Story:</strong> Security + Networks + Systems</li>
-                        </ul>
-                    </div>
-                </div>
+    // =========================
+    // NEW: remove weird [cite_*] markers if present
+    // (keeps all links + content, just cleans those tokens)
+    // =========================
+    (function cleanupCiteMarkers(){
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(n => {
+        n.nodeValue = n.nodeValue
+          .replace(/\[cite_start\]/g, "")
+          .replace(/\[cite:\s*[\d,\s]+\]/g, "");
+      });
+    })();
 
-                <div class="warning-box" style="margin-top: 1.5rem;">
-                    <strong>Common Sense Pairing Rule:</strong> Don't pair your hardest CS theory class with your hardest Math class AND a major recruiting semester.
-                </div>
-            </section>
+    // --- Animations (kept + refined) ---
+    // Sidebar slide-in (desktop only feel)
+    gsap.from(".nav-item", {
+      duration: 0.7, x: -22, opacity: 0, stagger: 0.06, ease: "power3.out", delay: 0.05
+    });
+    // Brand pop
+    gsap.from(".brand", { duration: 0.9, y: -14, opacity: 0, ease: "power3.out" });
 
-            <section id="timeline">
-                <h2>5. Experience & Recruiting Timeline</h2>
-                <p>This is the section that actually changes outcomes.</p>
+    // Section reveal (Apple-ish: subtle)
+    gsap.utils.toArray("section").forEach(section => {
+      gsap.from(section, {
+        scrollTrigger: { trigger: section, start: "top 82%" },
+        y: 24, opacity: 0, duration: 0.7, ease: "power2.out"
+      });
+    });
 
-                <div class="timeline">
-                    <div class="timeline-line"></div>
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="card">
-                            <span class="badge blue">Freshman Fall</span>
-                            <h4>Exploration + Setup</h4>
-                            <ul>
-                                <li>Join 1–2 tech communities (one for building, one for networking).</li>
-                                <li>Start GitHub early (even tiny projects).</li>
-                                <li>Learn how recruiting works (Handshake).</li>
-                                <li><em>Mistake:</em> Waiting until sophomore year to build outside class.</li>
-                            </ul>
-                        </div>
-                    </div>
+    // Staggered Cards (subtle)
+    gsap.utils.toArray(".grid-2, .grid-3").forEach(grid => {
+      gsap.from(grid.children, {
+        scrollTrigger: { trigger: grid, start: "top 85%" },
+        y: 18, opacity: 0, duration: 0.55, stagger: 0.06, ease: "power2.out"
+      });
+    });
 
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="card">
-                            <span class="badge green">Freshman Spring</span>
-                            <h4>First Proof of Skill</h4>
-                            <ul>
-                                <li>Finish intro sequence momentum.</li>
-                                <li>Build 1 portfolio project (Simple but deployed + documented).</li>
-                                <li>Attend Luddy events to practice talking to recruiters. (<a href="https://luddy.indiana.edu/student_portal/career-services/career-fairs-events.html?utm_source=chatgpt.com" target="_blank">luddy.indiana.edu</a>)</li>
-                            </ul>
-                        </div>
-                    </div>
+    // Timeline line draw
+    // ===== Timeline Flow Upgrade (scroll-driven progress + active step) =====
+    (() => {
+    const timeline = document.querySelector(".timeline");
+    if (!timeline) return;
 
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="card">
-                            <span class="badge gold">Freshman Summer</span>
-                            <h4>First Exposure</h4>
-                            <p><strong>Goal:</strong> Any technical work (Research, IT, Freelance) OR a "summer shipping project" with weekly deliverables.</p>
-                        </div>
-                    </div>
+    const line = timeline.querySelector(".timeline-line");
+    const items = gsap.utils.toArray(".timeline-item");
 
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="card">
-                            <span class="badge red">Sophomore Fall</span>
-                            <h4>Resume Becomes Real</h4>
-                            <ul>
-                                <li>Get into DS&A (C343) early. (<a href="https://bulletins.iu.edu/iub/sice/2021-2022/undergraduate/degree-programs/bs-computer-science/luddy-degree-major-req.shtml?utm_source=chatgpt.com" target="_blank">bulletins.iu.edu</a>)</li>
-                                <li>Start interview prep consistently.</li>
-                                <li>Go hard at Luddy Career Fair. (<a href="https://luddy.indiana.edu/student_portal/career-services/career-fairs-events.html?utm_source=chatgpt.com" target="_blank">luddy.indiana.edu</a>)</li>
-                            </ul>
-                        </div>
-                    </div>
+    // 1) Scroll-driven line fill (uses ::after height)
+    
+    const fill = document.createElement("div");
+    fill.className = "timeline-fill";
+    Object.assign(fill.style, {
+        position: "absolute",
+        left: "0",
+        top: "0",
+        width: "100%",
+        height: "0%",
+        borderRadius: "999px",
+        background: "linear-gradient(180deg, rgba(153,0,0,1), rgba(255,215,0,0.95))",
+        boxShadow: "0 0 18px rgba(153,0,0,0.35)",
+        willChange: "height"
+    });
+    // Ensure line is positioned correctly for fill
+    line.style.position = "absolute";
+    line.style.overflow = "hidden";
+    line.appendChild(fill);
 
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="card">
-                            <span class="badge red">Junior Fall</span>
-                            <h4>Prime Time</h4>
-                            <p>Career-defining window for top internships. Use specialization + projects narrative.</p>
-                            <p>Targeted outreach + referrals (<a href="https://luddy.indiana.edu/student_portal/career-services/career-fairs-events.html?utm_source=chatgpt.com" target="_blank">luddy.indiana.edu</a>).</p>
-                        </div>
-                    </div>
+    // 2) Animate fill height based on scroll
+    gsap.to(fill, {
+        height: "100%",
+        ease: "none",
+        scrollTrigger: {
+        trigger: timeline,
+        start: "top 70%",
+        end: "bottom 65%",
+        scrub: true
+        }
+    });
 
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="card">
-                            <span class="badge blue">Senior Year</span>
-                            <h4>Convert or Backup</h4>
-                            <p>If return offer: Lock it in. If not: Full-time recruiting + Capstone + Alumni networking.</p>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-            <section id="github-repos">
-                <h2>⭐ High-Impact GitHub Repos</h2>
-                <p>The "cheat codes" for mastering CS and Data Science. These are world-class resources used by top engineers.</p>
-
-                <div class="grid-3 searchable-container">
-                    <div class="card searchable-item" data-keywords="roadmap path career frontend backend devops">
-                        <span class="badge blue">Direction</span>
-                        <h4>Developer Roadmap</h4>
-                        <p>Interactive visual maps for every career path. <em>Essential for knowing what to learn next.</em></p>
-                        <a href="https://github.com/kamranahmedse/developer-roadmap" target="_blank">View Repo →</a>
-                    </div>
-
-                    <div class="card searchable-item" data-keywords="interview leetcode study plan faang">
-                        <span class="badge red">Interview Prep</span>
-                        <h4>Coding Interview Univ.</h4>
-                        <p>A complete multi-month study plan for becoming a software engineer at big tech companies.</p>
-                        <a href="https://github.com/jwasham/coding-interview-university" target="_blank">View Repo →</a>
-                    </div>
-
-                    <div class="card searchable-item" data-keywords="system design scale architecture backend">
-                        <span class="badge red">Interview Prep</span>
-                        <h4>System Design Primer</h4>
-                        <p>Learn how to design large-scale systems (like Netflix or Uber). <em>Crucial for Junior/Senior roles.</em></p>
-                        <a href="https://github.com/donnemartin/system-design-primer" target="_blank">View Repo →</a>
-                    </div>
-
-                    <div class="card searchable-item" data-keywords="projects build software from scratch database compiler">
-                        <span class="badge green">Projects</span>
-                        <h4>Build Your Own X</h4>
-                        <p>A massive list of tutorials to build your own Docker, Git, or Database from scratch.</p>
-                        <a href="https://github.com/codecrafters-io/build-your-own-x" target="_blank">View Repo →</a>
-                    </div>
-
-                    <div class="card searchable-item" data-keywords="data science ml machine learning ai analytics">
-                        <span class="badge gold">Data Science</span>
-                        <h4>Awesome Data Science</h4>
-                        <p>The ultimate curated list of resources, libraries, and datasets for every branch of Data Science.</p>
-                        <a href="https://github.com/academic/awesome-datascience" target="_blank">View Repo →</a>
-                    </div>
-
-                    <div class="card searchable-item" data-keywords="data engineering python pipeline sql etl">
-                        <span class="badge blue">Data Engineering</span>
-                        <h4>Data Engineer Handbook</h4>
-                        <p>Everything you need to know about the modern data stack: Spark, SQL, and AWS pipelines.</p>
-                        <a href="https://github.com/DataExpert-io/data-engineer-handbook" target="_blank">View Repo →</a>
-                    </div>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
-
-    <script>
-        gsap.registerPlugin(ScrollTrigger);
-
-        // --- Animations ---
-        // Sidebar slide-in
-        gsap.from(".nav-item", { duration: 0.8, x: -50, opacity: 0, stagger: 0.1, ease: "power3.out", delay: 0.2 });
-        // Header fade-in
-        gsap.from(".brand", { duration: 1, y: -20, opacity: 0, ease: "elastic.out(1, 0.5)" });
-
-        // Section Reveal
-        gsap.utils.toArray("section").forEach(section => {
-            gsap.from(section, {
-                scrollTrigger: { trigger: section, start: "top 85%" },
-                y: 50, opacity: 0, duration: 1, ease: "power3.out"
-            });
-        });
-
-        // Staggered Cards
-        gsap.utils.toArray(".grid-2, .grid-3").forEach(grid => {
-            gsap.from(grid.children, {
-                scrollTrigger: { trigger: grid, start: "top 85%" },
-                y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: "back.out(1.5)"
-            });
-        });
-
-        // Timeline Line Drawing
-        gsap.from(".timeline-line", {
-            scrollTrigger: { trigger: ".timeline", start: "top 70%", end: "bottom 70%", scrub: 1 },
-            scaleY: 0, ease: "none"
-        });
-
-        // Parallax Background
-        gsap.to(".parallax-bg", {
-            yPercent: 20, ease: "none",
-            scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: true }
-        });
-
-        // --- Interaction Logic ---
-        
-        // Search
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            document.querySelectorAll('.searchable-item').forEach(item => {
-                const text = item.innerText.toLowerCase();
-                const keys = item.getAttribute('data-keywords') || "";
-                if(text.includes(term) || keys.includes(term)) {
-                    gsap.to(item, { autoAlpha: 1, display: "block", duration: 0.3 });
-                } else {
-                    gsap.to(item, { autoAlpha: 0, display: "none", duration: 0.3 });
-                }
-            });
-        });
-
-        // Dark Mode
-        const themeBtn = document.getElementById('themeBtn');
-        const html = document.documentElement;
-        themeBtn.addEventListener('click', () => {
-            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            themeBtn.textContent = newTheme === 'light' ? '🌙' : '☀️';
-        });
-
-        // Mobile Sidebar
-        function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            if(sb.style.display === 'flex') {
-                sb.style.display = '';
-            } else {
-                sb.style.display = 'flex';
-                sb.style.position = 'fixed';
-                sb.style.left = '0';
-                sb.style.width = '75%';
+    // 3) Animate each item in (slide from right + fade)
+    items.forEach((item, i) => {
+        const card = item.querySelector(".card");
+        gsap.fromTo(
+        card,
+        { y: 18, x: 10, opacity: 0 },
+        {
+            y: 0, x: 0, opacity: 1,
+            duration: 0.6,
+            ease: "power2.out",
+            scrollTrigger: {
+            trigger: item,
+            start: "top 80%",
+            end: "bottom 55%",
+            toggleActions: "play none none reverse"
             }
         }
-    </script>
+        );
+    });
+
+    // 4) Active step highlight as you scroll
+    items.forEach(item => {
+        ScrollTrigger.create({
+        trigger: item,
+        start: "top 60%",
+        end: "bottom 60%",
+        onEnter: () => item.classList.add("is-active"),
+        onEnterBack: () => item.classList.add("is-active"),
+        onLeave: () => item.classList.remove("is-active"),
+        onLeaveBack: () => item.classList.remove("is-active")
+        });
+    });
+    })();
+
+
+    // Parallax background (kept)
+    gsap.to(".parallax-bg", {
+      yPercent: 14, ease: "none",
+      scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: true }
+    });
+
+    // =========================
+    // NEW: scroll progress bar
+    // =========================
+    const progressBar = document.getElementById('progressBar');
+    const progressLabel = document.getElementById('progressLabel');
+    function updateProgress() {
+      const doc = document.documentElement;
+      const scrollTop = doc.scrollTop || document.body.scrollTop;
+      const scrollHeight = doc.scrollHeight - doc.clientHeight;
+      const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      progressBar.style.width = pct.toFixed(2) + "%";
+      if (progressLabel) progressLabel.textContent = "Progress " + Math.round(pct) + "%";
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // =========================
+    // NEW: Active section highlight in sidebar
+    // =========================
+    const navLinks = Array.from(document.querySelectorAll('.nav-menu .nav-item'));
+    const sections = Array.from(document.querySelectorAll('main section'));
+    const sectionById = new Map(sections.map(s => [s.id, s]));
+
+    const observer = new IntersectionObserver((entries) => {
+      // pick the most visible section
+      const visible = entries
+        .filter(e => e.isIntersecting)
+        .sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible) return;
+
+      navLinks.forEach(a => a.classList.remove('active'));
+      const active = navLinks.find(a => a.getAttribute('href') === "#" + visible.target.id);
+      if (active) active.classList.add('active');
+    }, { root: null, threshold: [0.15, 0.25, 0.4, 0.6] });
+
+    sections.forEach(s => observer.observe(s));
+
+    // Smooth anchor scroll (keeps default but makes it feel premium)
+    navLinks.forEach(a => {
+      a.addEventListener('click', (e) => {
+        // let middle-click / new tab work
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const target = sectionById.get(id);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        toggleSidebar(false);
+      });
+    });
+
+    // =========================
+    // Search (kept, but improved UX)
+    // - Keeps your keyword logic
+    // - Adds a "no results" gentle behavior by dimming instead of hard disappearing
+    // =========================
+    const searchInput = document.getElementById('searchInput');
+    const searchableItems = Array.from(document.querySelectorAll('.searchable-item'));
+    function runSearch(term) {
+      const t = (term || "").toLowerCase().trim();
+      let any = false;
+
+      searchableItems.forEach(item => {
+        const text = item.innerText.toLowerCase();
+        const keys = (item.getAttribute('data-keywords') || "").toLowerCase();
+        const hit = !t || text.includes(t) || keys.includes(t);
+
+        if (hit) any = true;
+
+        gsap.to(item, {
+          autoAlpha: hit ? 1 : 0.22,
+          filter: hit ? "blur(0px)" : "blur(0.6px)",
+          scale: hit ? 1 : 0.98,
+          duration: 0.22,
+          overwrite: true
+        });
+        item.style.pointerEvents = hit ? "auto" : "none";
+      });
+
+      // If term exists and nothing matched, restore visibility (avoid "blank page" feeling)
+      if (t && !any) {
+        searchableItems.forEach(item => {
+          gsap.to(item, { autoAlpha: 1, filter: "blur(0px)", scale: 1, duration: 0.18, overwrite: true });
+          item.style.pointerEvents = "auto";
+        });
+      }
+    }
+
+    searchInput.addEventListener('input', (e) => runSearch(e.target.value));
+
+    // Quick chips -> fills search
+    const chipRow = document.getElementById('chipRow');
+    const chips = Array.from(document.querySelectorAll('.chip'));
+    function setChipActive(chipEl) {
+      chips.forEach(c => c.classList.remove('active'));
+      if (chipEl) chipEl.classList.add('active');
+    }
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const v = chip.getAttribute('data-chip');
+        setChipActive(chip);
+        searchInput.value = v;
+        runSearch(v);
+      });
+    });
+
+    // =========================
+    // Dark Mode (kept + refined)
+    // - Saves preference
+    // =========================
+    const themeBtn = document.getElementById('themeBtn');
+    const html = document.documentElement;
+
+    function applyTheme(theme) {
+      html.setAttribute('data-theme', theme);
+      themeBtn.textContent = theme === 'light' ? '🌙' : '☀️';
+      localStorage.setItem('theme', theme);
+    }
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || savedTheme === 'light') applyTheme(savedTheme);
+
+    themeBtn.addEventListener('click', () => {
+      const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      applyTheme(newTheme);
+    });
+
+    // =========================
+    // NEW: Back to top button
+    // =========================
+    const jumpTopBtn = document.getElementById('jumpTopBtn');
+    jumpTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+    // =========================
+    // Mobile Sidebar (improved)
+    // - Overlay backdrop
+    // - Locks scroll
+    // =========================
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('backdrop');
+
+    function toggleSidebar(force) {
+      const shouldOpen = typeof force === "boolean" ? force : !sidebar.classList.contains('open');
+      sidebar.classList.toggle('open', shouldOpen);
+      backdrop.classList.toggle('show', shouldOpen);
+
+      // prevent background scroll when open
+      document.body.style.overflow = shouldOpen ? "hidden" : "";
+    }
+
+    // Expose to onclick
+    window.toggleSidebar = toggleSidebar;
+
+    // Close sidebar on Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.key === "Escape") toggleSidebar(false);
+    });
+
+    // Close sidebar when resizing to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 820) toggleSidebar(false);
+    });
+
+    // Prefer reduced motion: disable ScrollTrigger scrubbing if user requests
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    }
+  </script>
 </body>
 </html>
