@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IU CS Major Guide | Ultimate Edition</title>
+  <title>IU CS Major Guide</title>
 
   <!-- Keep your links -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet" />
@@ -1078,6 +1078,9 @@
         <h2>⭐ High-Impact GitHub Repos</h2>
         <p>The "cheat codes" for mastering CS and Data Science. These are world-class resources used by top engineers.</p>
 
+        <details class="section-details">
+        <summary>Show repos</summary>
+
         <div class="grid-3 searchable-container">
           <div class="card searchable-item" data-keywords="roadmap path career frontend backend devops projects">
             <span class="badge blue">Direction</span>
@@ -1121,6 +1124,7 @@
             <a href="https://github.com/DataExpert-io/data-engineer-handbook" target="_blank">View Repo →</a>
           </div>
         </div>
+        </details>
       </section>
     </main>
   </div>
@@ -1417,6 +1421,38 @@
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       ScrollTrigger.getAll().forEach(t => t.kill());
     }
+    window.addEventListener("load", () => {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(n => {
+        n.nodeValue = n.nodeValue
+        .replace(/\[cite_start\]/g, "")
+        .replace(/\[cite:\s*[\d,\s]+\]/g, "");
+    });
+  :root { --content-max: 980px; }
+  main { max-width: var(--content-max) !important; }
+
+  section {
+    margin-bottom: 88px !important;
+    padding-top: 18px;
+  }
+
+  .card {
+    padding: 1.75rem !important;
+  }
+
+  .grid-2, .grid-3 {
+    gap: 1.6rem !important;
+    margin-bottom: 46px !important;
+  }
+
+  .bg-overlay { backdrop-filter: blur(6px) !important; }
+  .card { box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important; }
+    
+    });
+
   </script>
 </body>
 </html>
